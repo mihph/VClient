@@ -1,18 +1,9 @@
-build/
-Debug/
-Release/
 .codelite/
 
 *.o
 *.d
 
-vclient
-
 *.session
 *.tags
 *.layout
 *.user
-
-vclient.conf
-
-output.txt
