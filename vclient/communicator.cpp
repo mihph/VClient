@@ -7,6 +7,7 @@
 #include <memory>
 #include <cstring>
 #include <cerrno>
+#include <system_error>
 
 Communicator::~Communicator() { closeConnection(); }
 
