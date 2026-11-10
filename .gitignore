@@ -1,18 +1,25 @@
-build/
-Debug/
-Release/
 .codelite/
-
-*.o
-*.d
-
-vclient
+tabgroups/
 
 *.session
 *.tags
-*.layout
-*.user
+*.workspace
+*.workspace.vboxuser
 
-vclient.conf
+*.o
+*.d
+build/
+Debug/
+Release/
+
+vclient
+
+*.conf
 
 output.txt
+result.txt
+*.log
+
+.DS_Store
+Thumbs.db
+*~
