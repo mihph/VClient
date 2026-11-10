@@ -14,22 +14,30 @@ UserInterface::UserInterface() : desc("Allowed options") {
 }
 
 bool UserInterface::parseArgs(int argc, char** argv) {
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    if (vm.count("help")) {
-        showHelp();
-        return false;
-    }
-    po::notify(vm);
-    
-    if (!params.configFile.empty() && params.configFile[0] == '~') {
-        const char* home = std::getenv("HOME");
-        if (home) {
-            params.configFile.replace(0, 1, std::string(home));
-        } else {
-            throw std::runtime_error("Не удалось определить домашнюю директорию для пути ~/.config/vclient.conf");
+    try {
+        auto parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
+        auto unrecognized = po::collect_unrecognized(parsed.options, po::include_positional);
+        if (!unrecognized.empty()) {
+            throw po::error("Лишний аргумент: " + unrecognized[0]);
         }
+        po::store(parsed, vm);
+        if (vm.count("help")) {
+            showHelp();
+            return false;
+        }
+        po::notify(vm);
+        if (!params.configFile.empty() && params.configFile[0] == '~') {
+            const char* home = std::getenv("HOME");
+            if (home) {
+                params.configFile.replace(0, 1, std::string(home));
+            } else {
+                throw std::runtime_error("Не удалось определить домашнюю директорию для пути ~/.config/vclient.conf");
+            }
+        }
+        return true;
+    } catch (const po::error& e) {
+        throw;
     }
-    return true;
 }
 
 void UserInterface::showHelp() {
