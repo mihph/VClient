@@ -130,7 +130,6 @@ static std::string where(const char* file, int line) {
         }                                                                                 \
     } while (0)
 
-// Ожидается исключение типа EX, текст what() которого содержит MSG.
 #define CHECK_THROWS_MSG(expr, EX, MSG)                                                   \
     do {                                                                                  \
         bool ok_ = false;                                                                 \
@@ -246,7 +245,6 @@ static uint32_t fromBe32(const std::string& s, size_t off = 0) {
            static_cast<uint32_t>(static_cast<unsigned char>(s[off + 3]));
 }
 
-// Соединение со стороны тестового сервера.
 class Conn {
 public:
     int fd;
@@ -261,7 +259,6 @@ public:
         }
         return r;
     }
-    // Пустая строка означает, что клиент закрыл соединение.
     std::string recvSome(size_t max = 1024) {
         std::string b(max, '\0');
         ssize_t k = ::recv(fd, &b[0], max, 0);
@@ -279,7 +276,6 @@ public:
     }
 };
 
-// Тестовый TCP-сервер на 127.0.0.1: принимает одно соединение и вызывает обработчик.
 class FakeServer {
     int lfd_ = -1;
     int port_ = 0;
@@ -330,7 +326,6 @@ public:
     }
     FakeServer(const FakeServer&) = delete;
     int port() const { return port_; }
-    // Дождаться завершения обработчика; ошибки сервера считаются ошибкой теста.
     void finish() {
         stop_ = true;
         if (th_.joinable()) th_.join();
@@ -343,7 +338,6 @@ public:
     }
 };
 
-// Порт, на котором заведомо никто не слушает.
 static int closedPort() {
     int fd = ::socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in a{};
@@ -1368,7 +1362,6 @@ TEST_CASE(G_UI, "Справка не требует обязательных п�
 
 namespace {
 
-// Сценарий поведения тестового сервера (реализует протокол обмена с клиентом).
 struct ServerScript {
     std::string saltReply = "A1B2C3D4E5F60789";  // ответ на LOGIN
     std::string authReply = "OK";                // ответ на хеш
@@ -1403,7 +1396,6 @@ void runScript(Conn& c, ServerScript& s) {
     }
 }
 
-// Каталог с конфигурацией, входным и выходным файлами.
 struct ClientEnv {
     TempDir dir;
     Params p;
@@ -1416,7 +1408,7 @@ struct ClientEnv {
     }
 };
 
-}  // namespace
+} 
 
 TEST_CASE(G_CLNT, "Успешный сценарий: три вектора", "Вход: {1,2,3}, {-5,5}, {}; сервер возвращает суммы", "start() = 0; в выходном файле \"3 6 0 0\"; в stdout сообщение об успехе") {
     ClientEnv env("3\n3 1 2 3\n2 -5 5\n0\n");
@@ -1718,8 +1710,8 @@ static std::string tsvSafe(std::string s) {
 }
 
 int main(int argc, char** argv) {
-    signal(SIGPIPE, SIG_IGN);  // запись в закрытый сокет должна давать ошибку, а не завершать тесты
-    alarm(180);                // защита от зависания
+    signal(SIGPIPE, SIG_IGN); 
+    alarm(180);               
 
     bool tsv = false;
     for (int i = 1; i < argc; ++i)
